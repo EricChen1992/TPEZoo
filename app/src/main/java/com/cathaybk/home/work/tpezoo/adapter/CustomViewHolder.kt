@@ -10,6 +10,7 @@ import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import com.cathaybk.home.work.tpezoo.DataContract
+import com.cathaybk.home.work.tpezoo.HttpsTrustManager
 import com.cathaybk.home.work.tpezoo.R
 import com.cathaybk.home.work.tpezoo.api.PlantResponse
 import com.cathaybk.home.work.tpezoo.db.ZooBuildingEntity
@@ -26,6 +27,7 @@ class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Data
 //                    .override(300, 300)
 //                    .fitCenter()
 //                    .into(imageView)
+                HttpsTrustManager().allowALLSSL()
                 getImageView(itemObject.bPicURL.replace("http://", "https://"), imageView)
 
                 itemView.findViewById<TextView>(R.id.item_name)?.let {
@@ -38,6 +40,7 @@ class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Data
         }
         if (itemObject is PlantResponse.ResultsItem){
             with(itemObject as PlantResponse.ResultsItem){
+                HttpsTrustManager().allowALLSSL()
                 val imageView = itemView.findViewById<ImageView>(R.id.plant_icon)
                 Glide.with(itemView.context)
                     .load(itemObject.fPic01URL.replace("http://", "https://").trim())

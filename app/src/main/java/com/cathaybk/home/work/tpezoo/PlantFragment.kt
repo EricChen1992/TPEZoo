@@ -83,6 +83,7 @@ class PlantFragment : Fragment(), DataContract.IPlantView{
         }
 
         fPlantImageView?.run {
+            HttpsTrustManager().allowALLSSL()
             Glide.with(requireActivity())
                 .load(fragmentList[0])
                 .error(R.drawable.tpezoo_icon)

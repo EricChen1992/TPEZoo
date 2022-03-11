@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.viewpager2.widget.ViewPager2
 import com.cathaybk.home.work.tpezoo.adapter.ViewPageAdapter
 import com.cathaybk.home.work.tpezoo.api.AnimalBuildingResponse
@@ -17,10 +19,14 @@ class MainFragment : Fragment(),DataContract.IMainView {
     val TAG : String = "Main Fragment"
     private lateinit var mainPresenter: MainPresenter
     private lateinit var mainView: View
+    private lateinit var viewPager2: ViewPager2
     private lateinit var viewPageAdapter: ViewPageAdapter
     private var tabLayoutMediator:TabLayoutMediator?= null
     private var indoorFragment:CategoryFragment?= null
     private var outdoorFragment:CategoryFragment?= null
+    private lateinit var mainCard: View
+    private lateinit var retryHint: TextView
+    private lateinit var retryBtn: Button
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,6 +46,21 @@ class MainFragment : Fragment(),DataContract.IMainView {
     override fun onGetResult(result: List<AnimalBuildingResponse.ResultsItem>?) {
         result?.let {
             (requireActivity() as MainActivity).showProgress(false)
+            if (it.isEmpty()){
+                viewPager2?.run {
+                    visibility = View.GONE
+                }
+                mainCard?.run {
+                    visibility = View.VISIBLE
+                }
+            } else {
+                viewPager2?.run {
+                    visibility = View.VISIBLE
+                }
+                mainCard?.run {
+                    visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -61,7 +82,23 @@ class MainFragment : Fragment(),DataContract.IMainView {
             viewPageAdapter.addFragment(indoorFragment!!)
             viewPageAdapter.addFragment(outdoorFragment!!)
 
-            val viewPager2 = mainView.findViewById<ViewPager2>(R.id.main_viewPage2)
+            mainCard = mainView.findViewById(R.id.main_retry)
+            mainCard?.run {
+                retryHint = this.findViewById(R.id.main_card_hint)
+                retryHint?.run {
+                    text = "取得資料發生錯誤....."
+                }
+
+                retryBtn = this.findViewById(R.id.main_card_retry_btn)
+                retryBtn?.run {
+                    text = "retry"
+                    (this@MainFragment.requireActivity() as MainActivity).showProgress(true)
+                    setOnClickListener { v ->  mainPresenter.getAnimalBuilding()}
+                }
+                visibility = View.GONE
+            }
+
+            viewPager2 = mainView.findViewById<ViewPager2>(R.id.main_viewPage2)
             viewPager2.adapter = viewPageAdapter
 
             val tableLayout = mainView.findViewById<TabLayout>(R.id.main_tabLayout)
