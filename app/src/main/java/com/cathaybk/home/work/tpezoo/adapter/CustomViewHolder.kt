@@ -1,17 +1,14 @@
 package com.cathaybk.home.work.tpezoo.adapter
 
-import android.graphics.Bitmap
-import android.util.Log
+
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.toolbox.ImageRequest
-import com.android.volley.toolbox.Volley
-import com.bumptech.glide.Glide
 import com.cathaybk.home.work.tpezoo.DataContract
 import com.cathaybk.home.work.tpezoo.HttpsTrustManager
 import com.cathaybk.home.work.tpezoo.R
+import com.cathaybk.home.work.tpezoo.WebImageSingleton
 import com.cathaybk.home.work.tpezoo.api.PlantResponse
 import com.cathaybk.home.work.tpezoo.db.ZooBuildingEntity
 
@@ -21,14 +18,8 @@ class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Data
         if (itemObject is ZooBuildingEntity){
             with(itemObject as ZooBuildingEntity) {
                 val imageView = itemView.findViewById<ImageView>(R.id.item_icon)
-//                Glide.with(itemView.context)
-//                    .load(itemObject.bPicURL.replace("http://", "https://").trim())
-//                    .error(R.drawable.tpezoo_toolbar_image)
-//                    .override(300, 300)
-//                    .fitCenter()
-//                    .into(imageView)
                 HttpsTrustManager().allowALLSSL()
-                getImageView(itemObject.bPicURL.replace("http://", "https://"), imageView)
+                WebImageSingleton.getInstance(itemView.context).setImageParameter(0, itemObject.bPicURL.replace("http://", "https://").trim().replace(" ", ""), imageView)
 
                 itemView.findViewById<TextView>(R.id.item_name)?.let {
                     it.text = bName
@@ -42,12 +33,8 @@ class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Data
             with(itemObject as PlantResponse.ResultsItem){
                 HttpsTrustManager().allowALLSSL()
                 val imageView = itemView.findViewById<ImageView>(R.id.plant_icon)
-                Glide.with(itemView.context)
-                    .load(itemObject.fPic01URL.replace("http://", "https://").trim())
-                    .error(R.drawable.tpezoo_icon)
-                    .override(300, 300)
-                    .fitCenter()
-                    .into(imageView)
+                imageView.setImageBitmap(null)
+                WebImageSingleton.getInstance(itemView.context).setImageParameter(0, itemObject.fPic01URL.replace("http://", "https://").trim().replace(" ", ""), imageView)
 
                 itemView.findViewById<TextView>(R.id.plant_name)?.let {
                     it.text = fNameCh
@@ -58,25 +45,6 @@ class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Data
                 }
             }
         }
-    }
-
-    fun getImageView(imageUrl:String, imageview: ImageView){
-        val imageRequest = ImageRequest(
-            imageUrl,
-            {bitmap -> // response listener
-                imageview.setImageBitmap(bitmap)
-            },
-            300, // max width
-            300, // max height
-            ImageView.ScaleType.CENTER_CROP, // image scale type
-            Bitmap.Config.RGB_565, // decode config
-            {error-> // error listener
-                Log.e("ImageError", error.toString())
-                imageview.setImageResource(R.drawable.tpezoo_icon)
-            }
-        )
-
-        Volley.newRequestQueue(itemView.context).add(imageRequest)
     }
 
 }

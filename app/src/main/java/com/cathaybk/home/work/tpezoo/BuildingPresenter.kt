@@ -10,7 +10,7 @@ class BuildingPresenter(
     private val fragmentView: DataContract.IBuildingView,
     private val repository: IDataRepository
 ) : DataContract.IBuildingPresenter{
-    private lateinit var list: ArrayList<PlantResponse.ResultsItem>
+    private var list: ArrayList<PlantResponse.ResultsItem> = arrayListOf()
     private lateinit var fragmentList: ArrayList<String>
     private var isDestory = false
 
@@ -32,9 +32,9 @@ class BuildingPresenter(
                             if (plantList?.size > 0){
                                 resultList.addAll(plantList)
                                 list = resultList
-                                if (!isDestory) fragmentView.onShowPlantList(list)
                             }
                         }
+                        if (!isDestory) fragmentView.onShowPlantList(list)
                     }
                 })
             }
